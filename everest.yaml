@@ -1,0 +1,7 @@
+- Name: BufferableUltra
+  Version: 0.1.0
+  DLL: BufferableUltra.dll
+  Author: DemoJameson
+  Dependencies:
+    - Name: Everest
+      Version: 1.2138.0
