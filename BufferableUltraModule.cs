@@ -43,7 +43,7 @@ namespace Celeste.Mod.BufferableUltra {
                 return;
             }
 
-            if (!climbJump && player.DashDir.X != 0f && player.DashDir.Y > 0f && player.Speed.Y > 0f) {
+            if ((!Settings.EnableClimbJumpFix || !climbJump) && player.DashDir.X != 0f && player.DashDir.Y > 0f && player.Speed.Y > 0f) {
                 player.DashDir.X = Math.Sign(player.DashDir.X);
                 player.DashDir.Y = 0f;
                 player.Ducking = true;
