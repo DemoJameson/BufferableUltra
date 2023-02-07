@@ -6,7 +6,6 @@ namespace Celeste.Mod.BufferableUltra {
         public static BufferableUltraModule Instance { get; private set; }
         public static BufferableUltraSettings Settings => (BufferableUltraSettings) Instance._Settings;
 
-        private static readonly FieldInfo OnGround = typeof(Player).GetField("onGround", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly Lazy<FieldInfo> tasManagerRunning =
             new Lazy<FieldInfo>(() => Type.GetType("TAS.Manager, CelesteTAS-EverestInterop")?.GetField("Running", BindingFlags.Static | BindingFlags.Public));
 
@@ -36,14 +35,15 @@ namespace Celeste.Mod.BufferableUltra {
 
         private void PlayerOnJump(On.Celeste.Player.orig_Jump orig, Player player, bool particles, bool playSfx) {
             if (!Settings.Enabled ||
-                Settings.GroundOnly && (bool) OnGround.GetValue(player) == false ||
+                Settings.GroundOnly && !player.LoseShards ||
+                Settings.EnableClimbJumpFix && climbJump ||
                 Settings.AvoidAffectingTAS && (bool?) tasManagerRunning.Value?.GetValue(null) == true
             ) {
                 orig(player, particles, playSfx);
                 return;
             }
 
-            if ((!Settings.EnableClimbJumpFix || !climbJump) && player.DashDir.X != 0f && player.DashDir.Y > 0f && player.Speed.Y > 0f) {
+            if (player.DashDir.X != 0f && player.DashDir.Y > 0f && player.Speed.Y > 0f) {
                 player.DashDir.X = Math.Sign(player.DashDir.X);
                 player.DashDir.Y = 0f;
                 player.Ducking = true;
